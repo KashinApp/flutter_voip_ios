@@ -16,6 +16,7 @@ class CallKitCenter: NSObject {
     private let localizedName: String
     private let supportVideo: Bool
     private let skipRecallScreen: Bool
+    private var ringtone: String?
     private var provider: CXProvider?
     private var uuid = UUID()
     private(set) var uuidString: String?
@@ -40,6 +41,7 @@ class CallKitCenter: NSObject {
             self.supportVideo = plist?["FIVKSupportVideo"] as? Bool ?? false
             self.skipRecallScreen = plist?["FIVKSkipRecallScreen"] as? Bool ?? false
             self.maximumCallGroups = plist?["FIVKMaximumCallGroups"] as? Int ?? 1
+            self.ringtone = plist?["FIVKRingtone"] as? String
         } else {
             self.iconName = "AppIcon-VoIPKit"
             self.localizedName = "App Name"
@@ -56,6 +58,11 @@ class CallKitCenter: NSObject {
         providerConfiguration.maximumCallGroups = maximumCallGroups
         providerConfiguration.supportedHandleTypes = [.generic]
         providerConfiguration.iconTemplateImageData = UIImage(named: self.iconName)?.pngData()
+
+        if let ringtone = self.ringtone {
+            providerConfiguration.ringtoneSound = ringtone
+        }
+
         self.provider = CXProvider(configuration: providerConfiguration)
         self.provider?.setDelegate(delegate, queue: nil)
     }
